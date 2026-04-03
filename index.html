@@ -417,9 +417,71 @@
       background: white;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      width: 700px;
+      width: 920px;
       display: flex;
       flex-direction: column;
+    }
+
+    /* ── 3D Motor Simulation Section ── */
+    .motor3d-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #motor3DCanvas, #servo3DCanvas {
+      width: 220px;
+      height: 220px;
+      border-radius: 16px;
+      cursor: grab;
+      background: linear-gradient(145deg, #e8f4f8 0%, #d0ebf5 40%, #f0f7fa 100%);
+      box-shadow: 0 4px 16px rgba(0,120,180,0.12), inset 0 0 20px rgba(255,255,255,0.5);
+      border: 2px solid rgba(0,160,220,0.15);
+    }
+    #motor3DCanvas:active, #servo3DCanvas:active { cursor: grabbing; }
+    .motor3d-speed-arrows, .servo3d-angle-arrows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: absolute;
+      right: -36px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .motor3d-speed-arrows button, .servo3d-angle-arrows button {
+      width: 32px;
+      height: 38px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .motor3d-speed-arrows button:active, .servo3d-angle-arrows button:active { transform: scale(0.9); }
+    .motor3d-arrow-up, .servo3d-arrow-up { background: linear-gradient(135deg, #43a047, #66bb6a); }
+    .motor3d-arrow-down, .servo3d-arrow-down { background: linear-gradient(135deg, #e53935, #ef5350); }
+    .motor3d-label, .servo3d-label {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #78909c;
+      text-align: center;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+    /* ── Servo 3D Section ── */
+    .servo3d-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
     .box-motor h3 {
@@ -2298,7 +2360,7 @@
   <div class="app">
     <div class="topbar">
       <div class="brand" style="display:flex;align-items:center;gap:10px">
-        <img src="logo.png" alt="weblogo" style="width:60px;height:auto;object-fit:contain;">
+        <img src="./assets/blockly/logo.png" alt="weblogo" style="width:60px;height:auto;object-fit:contain;">
         <div style="font-size:24px;font-weight:900;text-transform:uppercase">Curio Lab</div>
       </div>
       <div class="btns">
@@ -2747,10 +2809,10 @@
   <!-- Servo selection modal -->
   <div id="servoSelectionModal"
     style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
-    <div class="box box-motor" style="width:750px;">
+    <div class="box box-motor" style="width:920px;">
       <h3>Servo Configuration</h3>
-      <div style="display:flex;flex-direction:row;width:100%;gap:30px;justify-content:space-around;">
-        <div style="flex:1;border-right:2px solid #eee;padding-right:20px;">
+      <div style="display:flex;flex-direction:row;width:100%;gap:20px;justify-content:space-around;align-items:flex-start;">
+        <div style="flex:0.8;border-right:2px solid #eee;padding-right:20px;">
           <h4 style="text-align:center;">Select Ports</h4>
           <div class="box1 motor-box1">
             <div class="motor-box1-p1">
@@ -2783,6 +2845,17 @@
             </div>
           </div>
         </div>
+
+        <!-- 3D Servo Simulation -->
+        <div class="servo3d-section" style="flex:1;border-right:2px solid #eee;padding-right:20px;">
+          <canvas id="servo3DCanvas"></canvas>
+          <div class="servo3d-angle-arrows">
+            <button class="servo3d-arrow-up" onclick="changeServoAngle(15)">&#9650;</button>
+            <button class="servo3d-arrow-down" onclick="changeServoAngle(-15)">&#9660;</button>
+          </div>
+          <p class="servo3d-label">Drag to rotate view</p>
+        </div>
+
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
           <h4 style="text-align:center;">Set Angle</h4>
           <div class="servo-meter" style="transform:scale(0.65);margin-top:-40px;margin-bottom:-40px;">
@@ -2888,8 +2961,8 @@
     style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
     <div class="box box-motor">
       <h3>Motor Configuration</h3>
-      <div style="display:flex;flex-direction:row;width:100%;gap:30px;justify-content:space-around;">
-        <div style="flex:1;border-right:2px solid #eee;padding-right:20px;">
+      <div style="display:flex;flex-direction:row;width:100%;gap:20px;justify-content:space-around;align-items:flex-start;">
+        <div style="flex:0.8;border-right:2px solid #eee;padding-right:20px;">
           <h4 style="text-align:center;">Select Ports</h4>
           <div class="box1 motor-box1">
             <div class="motor-box1-p1">
@@ -2914,6 +2987,17 @@
             </div>
           </div>
         </div>
+
+        <!-- 3D Motor Simulation -->
+        <div class="motor3d-section" style="flex:1;border-right:2px solid #eee;padding-right:20px;">
+          <canvas id="motor3DCanvas"></canvas>
+          <div class="motor3d-speed-arrows">
+            <button class="motor3d-arrow-up" onclick="inspeed()">&#9650;</button>
+            <button class="motor3d-arrow-down" onclick="despeed()">&#9660;</button>
+          </div>
+          <p class="motor3d-label">Drag to rotate view</p>
+        </div>
+
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
           <h4 style="text-align:center;">Set Speed</h4>
           <div class="speed-meter" id="speedoGauge" style="transform:scale(0.7);margin-top:-30px;margin-bottom:-30px;">
@@ -4070,12 +4154,14 @@
       if (speedStep < 6) {
         speedStep++; speedPercent = Math.min(100, Math.round(speedStep * 16.6));
         angle = speedStep * 30; addclass(); fast(); updateGaugeUI();
+        if (motor3D.initialized) updateMotor3DSpeed();
       }
     }
     function despeed() {
       if (speedStep > 0) {
         speedStep--; speedPercent = Math.round(speedStep * 16.6);
         angle = speedStep * 30; addclass(); fast(); updateGaugeUI();
+        if (motor3D.initialized) updateMotor3DSpeed();
       }
     }
     function setSpeedByStep(t) { t = Math.max(0, Math.min(6, t)); while (speedStep < t) inspeed(); while (speedStep > t) despeed(); }
@@ -4106,6 +4192,469 @@
     }
     window.addEventListener("DOMContentLoaded", () => { bindSpeedControls(); bindSpeedoTouch(); });
 
+    // ══════════════════════════════════════════════════════════════
+    // 3D DC Motor + Wheel Simulation (Three.js r128) — Bright Theme
+    // ══════════════════════════════════════════════════════════════
+    let motor3D = { scene: null, camera: null, renderer: null, wheelGroup: null, motorGroup: null, targetRPM: 0, currentRPM: 0, animId: null, initialized: false };
+
+    function initMotor3D() {
+      if (motor3D.initialized) return;
+      const canvas = document.getElementById('motor3DCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const W = 220, H = 220;
+      canvas.width = W * 2; canvas.height = H * 2;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xe8f4f8);
+      // Soft gradient fog
+      scene.fog = new THREE.Fog(0xe8f4f8, 8, 18);
+
+      const camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+      camera.position.set(3.5, 2.0, 4.5);
+      camera.lookAt(0, 0.2, 0);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+      renderer.setSize(W, H);
+      renderer.setPixelRatio(2);
+      renderer.shadowMap.enabled = true;
+      renderer.setClearColor(0xe8f4f8, 1);
+
+      // Bright warm lighting
+      const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+      scene.add(ambient);
+      const dirLight = new THREE.DirectionalLight(0xfff5e6, 0.85);
+      dirLight.position.set(4, 6, 4);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+      const fillLight = new THREE.DirectionalLight(0xe0f0ff, 0.35);
+      fillLight.position.set(-3, 4, -2);
+      scene.add(fillLight);
+      const rimLight = new THREE.PointLight(0xffe0c0, 0.3, 12);
+      rimLight.position.set(3, 1, -3);
+      scene.add(rimLight);
+
+      // Soft ground plane
+      const groundGeo = new THREE.PlaneGeometry(14, 14);
+      const groundMat = new THREE.MeshStandardMaterial({ color: 0xd4e8ef, roughness: 0.95, metalness: 0 });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -0.85;
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      // ── DC Motor Body ──
+      const motorGroup = new THREE.Group();
+
+      // Motor cylinder body — clean silver-gray
+      const motorBodyGeo = new THREE.CylinderGeometry(0.38, 0.38, 1.3, 32);
+      const motorBodyMat = new THREE.MeshStandardMaterial({ color: 0x78909c, metalness: 0.6, roughness: 0.35 });
+      const motorBody = new THREE.Mesh(motorBodyGeo, motorBodyMat);
+      motorBody.rotation.z = Math.PI / 2;
+      motorBody.castShadow = true;
+      motorGroup.add(motorBody);
+
+      // Motor front cap
+      const capGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.08, 32);
+      const capMat = new THREE.MeshStandardMaterial({ color: 0x90a4ae, metalness: 0.7, roughness: 0.25 });
+      const frontCap = new THREE.Mesh(capGeo, capMat);
+      frontCap.rotation.z = Math.PI / 2;
+      frontCap.position.x = 0.68;
+      motorGroup.add(frontCap);
+
+      // Motor back cap
+      const backCap = new THREE.Mesh(capGeo, capMat);
+      backCap.rotation.z = Math.PI / 2;
+      backCap.position.x = -0.68;
+      motorGroup.add(backCap);
+
+      // Motor shaft — gold colored
+      const shaftGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.7, 16);
+      const shaftMat = new THREE.MeshStandardMaterial({ color: 0xffc107, metalness: 0.85, roughness: 0.15 });
+      const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+      shaft.rotation.z = Math.PI / 2;
+      shaft.position.x = 1.05;
+      motorGroup.add(shaft);
+
+      // Motor terminals (back) — red and blue
+      const termGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.2, 8);
+      const termMatR = new THREE.MeshStandardMaterial({ color: 0xef5350, metalness: 0.5, roughness: 0.4 });
+      const termMatB = new THREE.MeshStandardMaterial({ color: 0x42a5f5, metalness: 0.5, roughness: 0.4 });
+      const term1 = new THREE.Mesh(termGeo, termMatR);
+      term1.position.set(-0.82, 0.15, 0.12);
+      motorGroup.add(term1);
+      const term2 = new THREE.Mesh(termGeo, termMatB);
+      term2.position.set(-0.82, 0.15, -0.12);
+      motorGroup.add(term2);
+
+      // Motor accent ring — orange
+      const ringGeo = new THREE.TorusGeometry(0.39, 0.02, 8, 32);
+      const ringMat = new THREE.MeshStandardMaterial({ color: 0xff7043, metalness: 0.7, roughness: 0.2 });
+      const ring1 = new THREE.Mesh(ringGeo, ringMat);
+      ring1.rotation.y = Math.PI / 2;
+      ring1.position.x = 0.3;
+      motorGroup.add(ring1);
+      const ring2 = ring1.clone();
+      ring2.position.x = -0.3;
+      motorGroup.add(ring2);
+
+      // Motor mounting bracket
+      const bracketGeo = new THREE.BoxGeometry(0.8, 0.08, 0.9);
+      const bracketMat = new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.5, roughness: 0.4 });
+      const bracket = new THREE.Mesh(bracketGeo, bracketMat);
+      bracket.position.y = -0.42;
+      bracket.castShadow = true;
+      motorGroup.add(bracket);
+
+      // Mounting feet
+      const footGeo = new THREE.BoxGeometry(0.12, 0.4, 0.12);
+      const footMat = new THREE.MeshStandardMaterial({ color: 0x90a4ae, metalness: 0.4, roughness: 0.5 });
+      [-0.35, 0.35].forEach(zz => {
+        const foot = new THREE.Mesh(footGeo, footMat);
+        foot.position.set(0, -0.62, zz);
+        foot.castShadow = true;
+        motorGroup.add(foot);
+      });
+
+      motorGroup.position.set(-0.6, 0.2, 0);
+      scene.add(motorGroup);
+
+      // ── Racing Wheel (attached to shaft) ──
+      const wheelGroup = new THREE.Group();
+
+      // Tire — dark charcoal
+      const tireGeo = new THREE.TorusGeometry(0.62, 0.18, 20, 48);
+      const tireMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.85, metalness: 0.1 });
+      const tire = new THREE.Mesh(tireGeo, tireMat);
+      tire.castShadow = true;
+      wheelGroup.add(tire);
+
+      // Tire tread pattern
+      for (let i = 0; i < 36; i++) {
+        const treadAngle = (i / 36) * Math.PI * 2;
+        const treadGeo = new THREE.BoxGeometry(0.02, 0.04, 0.38);
+        const treadMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.95 });
+        const tread = new THREE.Mesh(treadGeo, treadMat);
+        tread.position.set(Math.cos(treadAngle) * 0.62, Math.sin(treadAngle) * 0.62, 0);
+        tread.rotation.z = treadAngle;
+        wheelGroup.add(tread);
+      }
+
+      // Rim — bright silver
+      const rimGeo = new THREE.TorusGeometry(0.45, 0.05, 12, 48);
+      const rimMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, metalness: 0.9, roughness: 0.1 });
+      const rim = new THREE.Mesh(rimGeo, rimMat);
+      wheelGroup.add(rim);
+
+      // Inner rim ring
+      const innerRimGeo = new THREE.TorusGeometry(0.2, 0.04, 12, 32);
+      const innerRim = new THREE.Mesh(innerRimGeo, rimMat);
+      wheelGroup.add(innerRim);
+
+      // 5 Y-shaped spokes — bright chrome
+      const spokeMat = new THREE.MeshStandardMaterial({ color: 0xe0e0e0, metalness: 0.9, roughness: 0.08 });
+      for (let i = 0; i < 5; i++) {
+        const spokeAngle = (i / 5) * Math.PI * 2;
+        const spokeGeo = new THREE.BoxGeometry(0.05, 0.3, 0.04);
+        const spoke = new THREE.Mesh(spokeGeo, spokeMat);
+        spoke.position.set(Math.cos(spokeAngle) * 0.32, Math.sin(spokeAngle) * 0.32, 0);
+        spoke.rotation.z = spokeAngle;
+        wheelGroup.add(spoke);
+        const brGeo = new THREE.BoxGeometry(0.035, 0.16, 0.035);
+        const brL = new THREE.Mesh(brGeo, spokeMat);
+        brL.position.set(Math.cos(spokeAngle + 0.18) * 0.4, Math.sin(spokeAngle + 0.18) * 0.4, 0);
+        brL.rotation.z = spokeAngle + 0.3;
+        wheelGroup.add(brL);
+        const brR = new THREE.Mesh(brGeo, spokeMat);
+        brR.position.set(Math.cos(spokeAngle - 0.18) * 0.4, Math.sin(spokeAngle - 0.18) * 0.4, 0);
+        brR.rotation.z = spokeAngle - 0.3;
+        wheelGroup.add(brR);
+      }
+
+      // Center hub
+      const hubGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.12, 24);
+      const hubMat = new THREE.MeshStandardMaterial({ color: 0xeceff1, metalness: 0.9, roughness: 0.05 });
+      const hub = new THREE.Mesh(hubGeo, hubMat);
+      hub.rotation.x = Math.PI / 2;
+      wheelGroup.add(hub);
+
+      // Center nut — orange accent
+      const nutGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.15, 6);
+      const nutMat = new THREE.MeshStandardMaterial({ color: 0xff7043, metalness: 0.7, roughness: 0.2 });
+      const nut = new THREE.Mesh(nutGeo, nutMat);
+      nut.rotation.x = Math.PI / 2;
+      wheelGroup.add(nut);
+
+      // Wheel disc
+      const discGeo = new THREE.CircleGeometry(0.44, 32);
+      const discMat = new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.4, roughness: 0.5, side: THREE.DoubleSide });
+      const disc = new THREE.Mesh(discGeo, discMat);
+      disc.position.z = -0.03;
+      wheelGroup.add(disc);
+
+      wheelGroup.rotation.y = Math.PI / 2;
+      wheelGroup.position.set(1.0, 0.2, 0);
+      scene.add(wheelGroup);
+
+      // ── Orbit drag ──
+      let isDrag = false, prevM = { x: 0, y: 0 };
+      let camTheta = 0.65, camPhi = 0.5, camDist = 6.5;
+      function updateCam() {
+        camera.position.x = camDist * Math.sin(camPhi) * Math.cos(camTheta);
+        camera.position.y = camDist * Math.cos(camPhi);
+        camera.position.z = camDist * Math.sin(camPhi) * Math.sin(camTheta);
+        camera.lookAt(0.2, 0.1, 0);
+      }
+      canvas.addEventListener('pointerdown', (e) => { isDrag = true; prevM = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); });
+      canvas.addEventListener('pointermove', (e) => { if (!isDrag) return; camTheta += (e.clientX - prevM.x) * 0.01; camPhi = Math.max(0.3, Math.min(1.4, camPhi + (e.clientY - prevM.y) * 0.01)); prevM = { x: e.clientX, y: e.clientY }; updateCam(); });
+      canvas.addEventListener('pointerup', () => { isDrag = false; });
+      canvas.addEventListener('pointerleave', () => { isDrag = false; });
+
+      motor3D.scene = scene; motor3D.camera = camera; motor3D.renderer = renderer;
+      motor3D.wheelGroup = wheelGroup; motor3D.motorGroup = motorGroup; motor3D.initialized = true;
+      animateMotor3D();
+    }
+
+    function updateMotor3DSpeed() {
+      motor3D.targetRPM = speedPercent / 100 * 12;
+    }
+
+    function animateMotor3D() {
+      if (!motor3D.initialized) return;
+      motor3D.animId = requestAnimationFrame(animateMotor3D);
+      motor3D.currentRPM += (motor3D.targetRPM - motor3D.currentRPM) * 0.06;
+      if (motor3D.wheelGroup) motor3D.wheelGroup.rotation.z += motor3D.currentRPM * 0.02;
+      motor3D.renderer.render(motor3D.scene, motor3D.camera);
+    }
+
+    function destroyMotor3D() {
+      if (motor3D.animId) cancelAnimationFrame(motor3D.animId);
+      if (motor3D.renderer) motor3D.renderer.dispose();
+      motor3D = { scene: null, camera: null, renderer: null, wheelGroup: null, motorGroup: null, targetRPM: 0, currentRPM: 0, animId: null, initialized: false };
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // 3D Servo Motor Simulation (Three.js r128) — Angle-based
+    // ══════════════════════════════════════════════════════════════
+    let servo3D = { scene: null, camera: null, renderer: null, hornGroup: null, targetAngle: 0, currentAngle: 0, animId: null, initialized: false };
+
+    function initServo3D() {
+      if (servo3D.initialized) return;
+      const canvas = document.getElementById('servo3DCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const W = 220, H = 220;
+      canvas.width = W * 2; canvas.height = H * 2;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf0f4e8);
+      scene.fog = new THREE.Fog(0xf0f4e8, 8, 18);
+
+      const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
+      camera.position.set(2.5, 3.0, 5.0);
+      camera.lookAt(0, 0.3, 0);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+      renderer.setSize(W, H);
+      renderer.setPixelRatio(2);
+      renderer.shadowMap.enabled = true;
+      renderer.setClearColor(0xf0f4e8, 1);
+
+      // Warm bright lighting
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dirL = new THREE.DirectionalLight(0xfff8e1, 0.85);
+      dirL.position.set(5, 7, 4); dirL.castShadow = true;
+      scene.add(dirL);
+      const fillL = new THREE.DirectionalLight(0xe8f5e9, 0.3);
+      fillL.position.set(-4, 3, -2);
+      scene.add(fillL);
+
+      // Ground
+      const gndGeo = new THREE.PlaneGeometry(14, 14);
+      const gndMat = new THREE.MeshStandardMaterial({ color: 0xdce8d0, roughness: 0.95 });
+      const gnd = new THREE.Mesh(gndGeo, gndMat);
+      gnd.rotation.x = -Math.PI / 2; gnd.position.y = -0.6; gnd.receiveShadow = true;
+      scene.add(gnd);
+
+      // ── Servo Motor Body ──
+      const servoGroup = new THREE.Group();
+
+      // Main body — blue
+      const bodyGeo = new THREE.BoxGeometry(0.9, 0.75, 1.5);
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e88e5, metalness: 0.3, roughness: 0.5 });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.castShadow = true;
+      servoGroup.add(body);
+
+      // Body edge highlight
+      const edgeGeo = new THREE.BoxGeometry(0.92, 0.04, 1.52);
+      const edgeMat = new THREE.MeshStandardMaterial({ color: 0x1565c0, metalness: 0.4, roughness: 0.4 });
+      const topEdge = new THREE.Mesh(edgeGeo, edgeMat);
+      topEdge.position.y = 0.375;
+      servoGroup.add(topEdge);
+
+      // Mounting tabs (flanges)
+      const tabGeo = new THREE.BoxGeometry(1.5, 0.07, 0.3);
+      const tabMat = new THREE.MeshStandardMaterial({ color: 0x1976d2, metalness: 0.3, roughness: 0.5 });
+      const tab = new THREE.Mesh(tabGeo, tabMat);
+      tab.position.set(0, -0.1, 0.7);
+      tab.castShadow = true;
+      servoGroup.add(tab);
+
+      // Mounting holes on tabs
+      const holeGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.08, 12);
+      const holeMat = new THREE.MeshStandardMaterial({ color: 0x0d47a1, metalness: 0.5, roughness: 0.3 });
+      [-0.58, 0.58].forEach(xx => {
+        const hole = new THREE.Mesh(holeGeo, holeMat);
+        hole.position.set(xx, -0.1, 0.7);
+        servoGroup.add(hole);
+      });
+
+      // Wire harness — 3 colored wires
+      const wireColors = [0xef5350, 0x43a047, 0xff8f00]; // red, green, orange
+      wireColors.forEach((col, i) => {
+        const wGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.8, 8);
+        const wMat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.6 });
+        const w = new THREE.Mesh(wGeo, wMat);
+        w.position.set(-0.1 + i * 0.1, -0.1, -1.1);
+        servoGroup.add(w);
+      });
+
+      // Wire connector block
+      const connGeo = new THREE.BoxGeometry(0.4, 0.12, 0.15);
+      const connMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.6 });
+      const conn = new THREE.Mesh(connGeo, connMat);
+      conn.position.set(0, -0.1, -1.5);
+      servoGroup.add(conn);
+
+      // Output shaft cylinder (on top)
+      const shaftBase = new THREE.CylinderGeometry(0.18, 0.18, 0.15, 24);
+      const shaftBaseMat = new THREE.MeshStandardMaterial({ color: 0xeceff1, metalness: 0.8, roughness: 0.15 });
+      const sBase = new THREE.Mesh(shaftBase, shaftBaseMat);
+      sBase.position.set(0.15, 0.45, 0.35);
+      servoGroup.add(sBase);
+
+      // Shaft gear ring
+      const gearRingGeo = new THREE.TorusGeometry(0.17, 0.015, 8, 24);
+      const gearRingMat = new THREE.MeshStandardMaterial({ color: 0xbdbdbd, metalness: 0.85, roughness: 0.1 });
+      const gearRing = new THREE.Mesh(gearRingGeo, gearRingMat);
+      gearRing.rotation.x = Math.PI / 2;
+      gearRing.position.set(0.15, 0.53, 0.35);
+      servoGroup.add(gearRing);
+
+      // Label stripe on body
+      const labelGeo = new THREE.BoxGeometry(0.91, 0.2, 0.02);
+      const labelMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.8 });
+      const label = new THREE.Mesh(labelGeo, labelMat);
+      label.position.set(0, 0.1, 0.76);
+      servoGroup.add(label);
+
+      servoGroup.position.set(0, 0, 0);
+      scene.add(servoGroup);
+
+      // ── Servo Horn (rotating arm) ──
+      const hornGroup = new THREE.Group();
+
+      // Horn base disc
+      const hornBaseGeo = new THREE.CylinderGeometry(0.14, 0.14, 0.06, 20);
+      const hornBaseMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.7, roughness: 0.2 });
+      const hornBase = new THREE.Mesh(hornBaseGeo, hornBaseMat);
+      hornGroup.add(hornBase);
+
+      // Main horn arm — white
+      const armGeo = new THREE.BoxGeometry(0.12, 0.06, 0.85);
+      const armMat = new THREE.MeshStandardMaterial({ color: 0xfafafa, metalness: 0.2, roughness: 0.5 });
+      const arm = new THREE.Mesh(armGeo, armMat);
+      arm.position.set(0, 0, 0.4);
+      arm.castShadow = true;
+      hornGroup.add(arm);
+
+      // Horn rounded tip
+      const tipGeo = new THREE.SphereGeometry(0.065, 12, 8);
+      const tipMat = new THREE.MeshStandardMaterial({ color: 0xfafafa, metalness: 0.2, roughness: 0.5 });
+      const tip = new THREE.Mesh(tipGeo, tipMat);
+      tip.position.set(0, 0, 0.82);
+      hornGroup.add(tip);
+
+      // Horn screw holes
+      [0.22, 0.45, 0.65].forEach(zz => {
+        const screwGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.07, 8);
+        const screwMat = new THREE.MeshStandardMaterial({ color: 0x9e9e9e, metalness: 0.8, roughness: 0.2 });
+        const screw = new THREE.Mesh(screwGeo, screwMat);
+        screw.position.set(0, 0, zz);
+        hornGroup.add(screw);
+      });
+
+      // Center screw — green accent
+      const cScrewGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.08, 6);
+      const cScrewMat = new THREE.MeshStandardMaterial({ color: 0x43a047, metalness: 0.7, roughness: 0.2 });
+      const cScrew = new THREE.Mesh(cScrewGeo, cScrewMat);
+      cScrew.position.y = 0.04;
+      hornGroup.add(cScrew);
+
+      // Angle indicator arrow on horn
+      const arrowShape = new THREE.Shape();
+      arrowShape.moveTo(0, 0);
+      arrowShape.lineTo(-0.04, -0.06);
+      arrowShape.lineTo(0.04, -0.06);
+      arrowShape.lineTo(0, 0);
+      const arrowGeo = new THREE.ExtrudeGeometry(arrowShape, { depth: 0.02, bevelEnabled: false });
+      const arrowMat = new THREE.MeshStandardMaterial({ color: 0xff7043 });
+      const arrow = new THREE.Mesh(arrowGeo, arrowMat);
+      arrow.rotation.x = Math.PI / 2;
+      arrow.position.set(0, 0.035, 0.15);
+      hornGroup.add(arrow);
+
+      hornGroup.position.set(0.15, 0.56, 0.35);
+      scene.add(hornGroup);
+
+      // ── Angle arc indicator (on ground, subtle) ──
+      const arcGeo = new THREE.RingGeometry(0.9, 1.0, 48, 1, 0, Math.PI);
+      const arcMat = new THREE.MeshStandardMaterial({ color: 0x66bb6a, metalness: 0.1, roughness: 0.8, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+      const arc = new THREE.Mesh(arcGeo, arcMat);
+      arc.rotation.x = -Math.PI / 2;
+      arc.position.set(0.15, 0.57, 0.35);
+      scene.add(arc);
+
+      // ── Orbit drag ──
+      let isDragS = false, prevMS = { x: 0, y: 0 };
+      let sCamTheta = 0.5, sCamPhi = 0.45, sCamDist = 5.8;
+      function updateSCam() {
+        camera.position.x = sCamDist * Math.sin(sCamPhi) * Math.cos(sCamTheta);
+        camera.position.y = sCamDist * Math.cos(sCamPhi);
+        camera.position.z = sCamDist * Math.sin(sCamPhi) * Math.sin(sCamTheta);
+        camera.lookAt(0.1, 0.3, 0);
+      }
+      canvas.addEventListener('pointerdown', (e) => { isDragS = true; prevMS = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); });
+      canvas.addEventListener('pointermove', (e) => { if (!isDragS) return; sCamTheta += (e.clientX - prevMS.x) * 0.01; sCamPhi = Math.max(0.2, Math.min(1.3, sCamPhi + (e.clientY - prevMS.y) * 0.01)); prevMS = { x: e.clientX, y: e.clientY }; updateSCam(); });
+      canvas.addEventListener('pointerup', () => { isDragS = false; });
+      canvas.addEventListener('pointerleave', () => { isDragS = false; });
+
+      servo3D.scene = scene; servo3D.camera = camera; servo3D.renderer = renderer;
+      servo3D.hornGroup = hornGroup; servo3D.initialized = true;
+      animateServo3D();
+    }
+
+    function updateServo3DAngle() {
+      // currentServoAngle is 0..360
+      servo3D.targetAngle = currentServoAngle * (Math.PI / 180);
+    }
+
+    function animateServo3D() {
+      if (!servo3D.initialized) return;
+      servo3D.animId = requestAnimationFrame(animateServo3D);
+      // Smooth interpolation — horn rotates on Y axis
+      servo3D.currentAngle += (servo3D.targetAngle - servo3D.currentAngle) * 0.1;
+      if (servo3D.hornGroup) servo3D.hornGroup.rotation.y = -servo3D.currentAngle;
+      servo3D.renderer.render(servo3D.scene, servo3D.camera);
+    }
+
+    function destroyServo3D() {
+      if (servo3D.animId) cancelAnimationFrame(servo3D.animId);
+      if (servo3D.renderer) servo3D.renderer.dispose();
+      servo3D = { scene: null, camera: null, renderer: null, hornGroup: null, targetAngle: 0, currentAngle: 0, animId: null, initialized: false };
+    }
+
     // ── Unified Motor Modal ──
     let currentUnifiedBlock = null;
     function openUnifiedModal(block) {
@@ -4120,8 +4669,10 @@
       fast(); addclass(); updateGaugeUI();
       document.getElementById('unifiedMotorModal').style.display = 'flex';
       bindSpeedControls(); bindSpeedoTouch();
+      // Init 3D motor after modal is visible so canvas has dimensions
+      setTimeout(() => { initMotor3D(); updateMotor3DSpeed(); }, 50);
     }
-    function closeUnifiedModal() { document.getElementById('unifiedMotorModal').style.display = 'none'; currentUnifiedBlock = null; }
+    function closeUnifiedModal() { destroyMotor3D(); document.getElementById('unifiedMotorModal').style.display = 'none'; currentUnifiedBlock = null; }
     function saveUnifiedSelection() {
       if (!currentUnifiedBlock) { closeUnifiedModal(); return; }
       const selected = [];
@@ -4196,6 +4747,7 @@
       updateServoUI();
       document.getElementById('servoSelectionModal').style.display = 'flex';
       initServoTouchControls();
+      setTimeout(() => { initServo3D(); updateServo3DAngle(); }, 50);
     }
     function initServoTouchControls() {
       const meter = document.querySelector('.servo-meter');
@@ -4225,6 +4777,7 @@
       if (fill) fill.style.setProperty('--angle', currentServoAngle + 'deg');
       const needle = document.getElementById("servoNeedle");
       if (needle) needle.style.transform = `rotate(${currentServoAngle}deg)`;
+      if (servo3D.initialized) updateServo3DAngle();
     }
     function saveServoSelection() {
       if (!currentServoBlock) return;
@@ -4234,7 +4787,7 @@
       currentServoBlock.setFieldValue(currentServoAngle.toString(), 'ANG');
       closeServoModal();
     }
-    function closeServoModal() { document.getElementById('servoSelectionModal').style.display = 'none'; currentServoBlock = null; }
+    function closeServoModal() { destroyServo3D(); document.getElementById('servoSelectionModal').style.display = 'none'; currentServoBlock = null; }
 
     // =====================================================================
     // GRADIENTS & SHADOWS
